@@ -62,8 +62,10 @@ the contents of c
 -- /Tip:/ use @getArgs@ and @run@
 main ::
   IO ()
-main =
-  error "todo"
+main = getArgs >>= (\args ->
+        case args of
+            Nil        -> error "No file name specified"
+            (arg :. _) -> run arg)
 
 type FilePath =
   Chars
@@ -72,31 +74,28 @@ type FilePath =
 run ::
   Chars
   -> IO ()
-run =
-  error "todo"
+run path = getFile path >>= (\(_, content) ->
+           getFiles (lines content) >>= printFiles)
 
 getFiles ::
   List FilePath
   -> IO (List (FilePath, Chars))
-getFiles =
-  error "todo"
+getFiles paths = sequence $ map getFile paths
 
 getFile ::
   FilePath
   -> IO (FilePath, Chars)
-getFile =
-  error "todo"
+getFile path = readFile path >>= (\content -> return (path, content))
 
 printFiles ::
   List (FilePath, Chars)
   -> IO ()
-printFiles =
-  error "todo"
+printFiles xs = (sequence $ map (uncurry printFile) xs) >>= (\_ -> return ())
 
 printFile ::
   FilePath
   -> Chars
   -> IO ()
-printFile =
-  error "todo"
+printFile path content = putStrLn ("============ " ++ path) >>= (\_ ->
+                         putStrLn content)
 
